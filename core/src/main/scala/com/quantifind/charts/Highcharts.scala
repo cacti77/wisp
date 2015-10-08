@@ -76,6 +76,8 @@ object Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLowe
   def startServer() = startWispServer()
   def setPort(port: Int) = setWispPort(port)
 
+  def getHtml = buildHtmlFragment
+
   private def addStyle[A, B, C, D](hc: Highchart, xy: IterablePair[A, B, C, D]) = {
     xy match {
       case s: StringIterableIterable[_] => xAxisCategories(hc, s.getCategories)
@@ -206,4 +208,3 @@ object Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLowe
     ).foreach{case(method, description) => println("\t%-35s%s".format(method, description))}
   }
 }
-

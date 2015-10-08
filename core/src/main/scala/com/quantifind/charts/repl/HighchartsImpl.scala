@@ -29,6 +29,13 @@ trait WebPlotHighcharts extends WebPlot[Highchart] {
     sb.toString()
   }
 
+  def buildHtmlFragment: String = {
+    val sb = new StringBuilder()
+    sb.append(loadLibraries)
+    plots.map(highchartsItem).foreach(sb.append)
+    sb.toString()
+  }
+
   def plotAll(): Unit = {
 
     val fileContents = buildHtmlFile()
@@ -65,6 +72,29 @@ trait WebPlotHighcharts extends WebPlot[Highchart] {
     plotAll()
     t
   }
+
+  val loadLibraries: String =
+    """
+      |<script type="text/javascript">
+      |  function loadLib(url) {
+      |    console.log('Loading library at: ' + url);
+      |    var script = document.createElement('script');
+      |    script.type = 'text/javascript';
+      |    script.src = url;
+      |    script.onload = function() { console.log('Loaded library at: ' + url); }
+      |    script.onerror = function(err) { alert(err); }
+      |    document.getElementsByTagName('head')[0].appendChild(script);
+      |  }
+      |  if (!window.jQuery) {
+      |    loadLib("http://code.jquery.com/jquery-1.8.2.min.js");
+      |  }
+      |  if (!window.Highcharts) {
+      |    loadLib("http://code.highcharts.com/4.0.4/highcharts.js");
+      |    loadLib("http://code.highcharts.com/4.0.4/modules/exporting.js");
+      |    loadLib("http://code.highcharts.com/4.0.4/highcharts-more.js");
+      |  }
+      |</script>
+    """.stripMargin
 
   def reloadJs =
     """
@@ -116,4 +146,23 @@ trait WebPlotHighcharts extends WebPlot[Highchart] {
     s"""
       |    <div id="container%s" style="min-width: 400px; height: 400px; margin: 0 auto"></div>
     """.stripMargin.format(index.toString)
+
+  def highchartsItem(hc: Highchart): String = {
+    val hash = hc.hashCode()
+    val containerId = Random.nextInt(1e10.toInt) + (if (hash < 0) -1 else 1) * hash // salt the hash to allow duplicates
+    highchartsItem(hc.toJson, containerId)
+  }
+
+  def highchartsItem(json: String, index: Int): String =
+    containerDivs(index) +
+      """
+      |<script type="text/javascript">
+      |  $('#container%s').highcharts(
+    """.stripMargin.format(index.toString) +
+      """
+      |    %s
+      |   );
+      |</script>
+      |
+    """.stripMargin.format(json)
 }
