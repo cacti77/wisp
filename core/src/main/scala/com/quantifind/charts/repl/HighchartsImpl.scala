@@ -37,32 +37,34 @@ trait WebPlotHighcharts extends WebPlot[Highchart] {
   }
 
   def plotAll(): Unit = {
+    if (!isServerModeDisabled) {
 
-    val fileContents = buildHtmlFile()
+      val fileContents = buildHtmlFile()
 
-    val temp = File.createTempFile("highcharts", ".html")
-    val pw = new PrintWriter(temp)
-    pw.print(fileContents)
-    pw.flush()
-    pw.close()
+      val temp = File.createTempFile("highcharts", ".html")
+      val pw = new PrintWriter(temp)
+      pw.print(fileContents)
+      pw.flush()
+      pw.close()
 
-    plotServer.foreach { ps =>
-      ps.p.success(())
-      ps.p = Promise[Unit]()
+      plotServer.foreach { ps =>
+        ps.p.success(())
+        ps.p = Promise[Unit]()
+      }
+
+      val (serverRootFile, port, serverMode) = getWispServerInfo()
+
+      lazy val link =
+        if (serverMode) {
+          FileUtils.deleteQuietly(serverRootFile)
+          FileUtils.moveFile(temp, serverRootFile)
+          s"http://${java.net.InetAddress.getLocalHost.getCanonicalHostName}:${port}"
+        } else s"file://$temp"
+
+      openFirstWindow(link)
+
+      println(s"Output written to $link (CMD + Click link in Mac OSX).")
     }
-
-    val (serverRootFile, port, serverMode) = getWispServerInfo()
-
-    lazy val link =
-      if (serverMode) {
-        FileUtils.deleteQuietly(serverRootFile)
-        FileUtils.moveFile(temp, serverRootFile)
-        s"http://${java.net.InetAddress.getLocalHost.getCanonicalHostName}:${port}"
-      } else s"file://$temp"
-
-    openFirstWindow(link)
-
-    println(s"Output written to $link (CMD + Click link in Mac OSX).")
   }
 
   override def plot(t: Highchart): Highchart = {

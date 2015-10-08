@@ -69,12 +69,25 @@ trait WebPlot[T] extends Plottable[T] {
   private var serverRootFileName = s"index-${System.currentTimeMillis()}.html"
   private var port = Port.any
   private var serverMode = false
+
+  // No web serving by default!
+  private var serverModeDisabled = true
   private var firstOpenWindow = false
 
   private var serverRootFile = new File(serverRootFileName)
 
   var http: Option[Server] = None
   var plotServer: Option[PlotServer] = None
+
+  def isServerModeDisabled = serverModeDisabled
+
+  def disableServerMode(): Unit = {
+    serverModeDisabled = true
+  }
+
+  def enableServerMode(): Unit = {
+    serverModeDisabled = false
+  }
 
   startWispServer()
 
@@ -140,7 +153,7 @@ trait WebPlot[T] extends Plottable[T] {
    * @param message
    */
   def startWispServer(message: String = s"http://${java.net.InetAddress.getLocalHost.getCanonicalHostName}:${port}/${serverRootFileName}") {
-    if (!serverMode) {
+    if (!serverModeDisabled && !serverMode) {
       serverMode = true
       val ps = new PlotServer
       val args = ps.parseArgs(Array("--altRoot", serverRootFile.getAbsolutePath, "--port", port.toString))
@@ -157,7 +170,7 @@ trait WebPlot[T] extends Plottable[T] {
    * Currently the index-*.html file persists in the $cwd if stopServer is not called.
    */
   def stopWispServer {
-    if (serverMode) {
+    if (!serverModeDisabled && serverMode) {
       serverRootFile.delete()
       // satisfy the promise, to avoid exception on close
       // TODO handle failure in the PlotServer
