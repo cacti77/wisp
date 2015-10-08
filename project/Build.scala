@@ -14,15 +14,30 @@ import sbtrelease.releaseTask
 
 import annotation.tailrec
 
+// XXX
+import sbtassembly.Plugin._
+import AssemblyKeys._
 
 object WispBuild extends Build {
 
 	lazy val wisp = Project("wisp", file("core"), settings = wispSettings)
 
+	// XXX
+  val meta = """META.INF(.)*""".r
+  mergeStrategy in assembly := {
+      case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
+      case PathList(ps @ _*) if ps.last endsWith ".html" => MergeStrategy.first
+      case n if n.startsWith("reference.conf") => MergeStrategy.concat
+      case n if n.endsWith(".conf") => MergeStrategy.concat
+      case meta(_) => MergeStrategy.discard
+      case x => MergeStrategy.first
+  }
+
 	def sharedSettings = Defaults.defaultSettings ++
 		ReleasePlugin.releaseSettings ++
 		BranchRelease.branchSettings ++
 		xerial.sbt.Sonatype.sonatypeSettings ++
+		assemblySettings ++ // XXX
 		Seq(
 			scalaVersion := "2.11.6",
 			crossScalaVersions := Seq("2.10.5", "2.11.6"),
