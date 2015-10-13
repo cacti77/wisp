@@ -15,7 +15,7 @@ import scala.language.implicitConversions
 * defined in a trait to have Iterable[T] with PartialFunction[Int, T] resolve to this method
 */
 
-object Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLowerPriorityImplicits with HighchartsStyles {
+class Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLowerPriorityImplicits with HighchartsStyles {
 
   implicit def mkStringIterableIterable[B: Numeric](ab: (Iterable[String], Iterable[B])) = new StringIterableIterable(ab._1, ab._2)
   implicit def mkStringIterableIterable[B: Numeric](ab: (Iterable[(String, B)])) = new StringIterableIterable(ab.map(_._1), ab.map(_._2))
@@ -78,7 +78,7 @@ object Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLowe
 
   def getHtml = buildHtmlFragment
 
-  private def addStyle[A, B, C, D](hc: Highchart, xy: IterablePair[A, B, C, D]) = {
+  def addStyle[A, B, C, D](hc: Highchart, xy: IterablePair[A, B, C, D]) = {
     xy match {
       case s: StringIterableIterable[_] => xAxisCategories(hc, s.getCategories)
       case _ => hc
@@ -138,7 +138,7 @@ object Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLowe
   def regression[A, B, C: Numeric, D: Numeric](xy: IterablePair[A, B, C, D]) = {
     def numericToDouble[X](x: X)(implicit ev: Numeric[X]): Double = ev.toDouble(x)
     val (xr, yr) = xy.toIterables
-    LeastSquareRegression.leastSquareRegression(xr.toSeq.map(numericToDouble(_)), yr.toSeq.map(numericToDouble(_)))
+    LeastSquareRegression.leastSquareRegression(this, xr.toSeq.map(numericToDouble(_)), yr.toSeq.map(numericToDouble(_)))
   }
 
   def scatter[A, B, C: Numeric, D: Numeric](xy: IterablePair[A, B, C, D]) = {

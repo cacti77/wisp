@@ -3,7 +3,6 @@ package com.quantifind.charts.highcharts
 import com.quantifind.charts.Highcharts
 import org.apache.commons.math3.stat.regression.OLSMultipleLinearRegression
 import com.quantifind.charts.highcharts.Highchart._
-import Highcharts._
 
 /**
  * User: jannis
@@ -15,7 +14,7 @@ import Highcharts._
 
 object LeastSquareRegression {
 
-  def leastSquareRegression(xSeq: Seq[Double], ySeq: Seq[Double]) = {
+  def leastSquareRegression(highcharts: Highcharts, xSeq: Seq[Double], ySeq: Seq[Double]) = {
     // regress the data
     val target: Array[Double]            = ySeq.toArray
     val predictor: Array[Array[Double]]  = xSeq.map(Array(_)).toArray
@@ -29,8 +28,8 @@ object LeastSquareRegression {
     val m = params(1)
     val residualRSquared = model.calculateAdjustedRSquared()
 
-    
-    // make the plot 
+
+    // make the plot
     val xMin = xSeq.min
     val xMax = xSeq.max
     val data = Series(xSeq.zip(ySeq).map{case (x,y) => Data(x,y)}, name = "Datapoints", chart = "scatter")
@@ -39,6 +38,6 @@ object LeastSquareRegression {
       color = data.color,
       name = "y = " + f"$b%1.5f" + " + " + f"$m%1.5f" + " * x"
     )
-    plot(Highchart(List(data,line), Some(Title("r² = " + f"$residualRSquared%1.5f"))))
+    highcharts.plot(Highchart(List(data,line), Some(Title("r² = " + f"$residualRSquared%1.5f"))))
   }
 }

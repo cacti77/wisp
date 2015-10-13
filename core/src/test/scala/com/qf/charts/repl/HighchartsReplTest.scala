@@ -1,6 +1,6 @@
 package com.qf.charts.repl
 
-import com.quantifind.charts.Highcharts._
+import com.quantifind.charts.Highcharts
 import org.scalatest.Matchers
 import org.scalatest.FunSuite
 
@@ -11,8 +11,9 @@ import org.scalatest.FunSuite
 class HighchartsReplTest extends FunSuite with Matchers  {
 
   test("Pie repl") {
-    disableOpenWindow // prevents server from starting
-    pie(1 to 4).toJson should be(
+    val highcharts = new Highcharts()
+    highcharts.disableOpenWindow // prevents server from starting
+    highcharts.pie(1 to 4).toJson should be(
         """{"series":[""" +
         """{"data":[{"x":0,"y":1},{"x":1,"y":2},{"x":2,"y":3},{"x":3,"y":4}],"type":"pie"}],""" +
         """"exporting":{"filename":"chart"},""" +

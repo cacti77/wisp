@@ -2,7 +2,7 @@ package com.qf.charts.repl
 
 import com.quantifind.charts.highcharts._
 import org.scalatest.{Matchers, FunSuite}
-import com.quantifind.charts.Highcharts._
+import com.quantifind.charts.Highcharts
 
 /**
  * User: austin
@@ -11,26 +11,29 @@ import com.quantifind.charts.Highcharts._
 class HighchartsStyleTest extends FunSuite with Matchers {
 
   test("legend") {
+    val highcharts = new Highcharts()
     val hc = Highchart(Seq(Series(Seq(Data(1, 2))), Series(Seq(Data(2, 3)))), xAxis = None, yAxis = None)
-    val styled_hc = legend(hc, List("Legend"))
+    val styled_hc = highcharts.legend(hc, List("Legend"))
     styled_hc.series.map(_.name) should be(Seq(Some("Legend"), None))
   }
 
   test("stacking") {
+    val highcharts = new Highcharts()
     val hc = Highchart(Seq(Series(Seq(Data(1, 2))), Series(Seq(Data(2, 3)))), xAxis = None, yAxis = None)
-    val stacked_hc = stack(hc, Stacking.normal)
+    val stacked_hc = highcharts.stack(hc, Stacking.normal)
     stacked_hc.plotOptions.head.series.head.stacking should be(Some(Stacking.normal))
-    val unstacked_hc = unstack(stacked_hc)
+    val unstacked_hc = highcharts.unstack(stacked_hc)
     unstacked_hc.plotOptions.head.series.head.stacking should be(None)
   }
 
   test("x-axis") {
+    val highcharts = new Highcharts()
     val hc = Highchart(Seq(Series(Seq(Data(1, 2))), Series(Seq(Data(2, 3)))), xAxis = None, yAxis = None)
-    val axistype_hc = xAxisType(hc, AxisType.logarithmic)
+    val axistype_hc = highcharts.xAxisType(hc, AxisType.logarithmic)
     axistype_hc should not be (None)
-    val axiscategories_hc = xAxisCategories(axistype_hc, List("First", "Second"))
+    val axiscategories_hc = highcharts.xAxisCategories(axistype_hc, List("First", "Second"))
     axiscategories_hc should not be (None)
-    val axistitle_hc = xAxis(axiscategories_hc, "Label")
+    val axistitle_hc = highcharts.xAxis(axiscategories_hc, "Label")
 
     println("=============" + axistitle_hc.toJson + "=============")
 
@@ -39,4 +42,3 @@ class HighchartsStyleTest extends FunSuite with Matchers {
     axistitle_hc.xAxis.get.apply(0).categories.get.mkString(",") should be("First,Second")
   }
 }
-
