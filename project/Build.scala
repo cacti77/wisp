@@ -14,7 +14,6 @@ import sbtrelease.releaseTask
 
 import annotation.tailrec
 
-// XXX
 import sbtassembly.Plugin._
 import AssemblyKeys._
 
@@ -22,7 +21,6 @@ object WispBuild extends Build {
 
 	lazy val wisp = Project("wisp", file("core"), settings = wispSettings)
 
-	// XXX
   val meta = """META.INF(.)*""".r
   mergeStrategy in assembly := {
       case PathList("javax", "servlet", xs @ _*) => MergeStrategy.first
@@ -37,7 +35,7 @@ object WispBuild extends Build {
 		ReleasePlugin.releaseSettings ++
 		BranchRelease.branchSettings ++
 		xerial.sbt.Sonatype.sonatypeSettings ++
-		assemblySettings ++ // XXX
+		assemblySettings ++
 		Seq(
 			scalaVersion := "2.11.6",
 			crossScalaVersions := Seq("2.10.5", "2.11.6"),
@@ -121,7 +119,8 @@ object WispBuild extends Build {
 			"net.databinder" %% "unfiltered-jetty" % "0.8.3",
 			"com.quantifind" %% "sumac" % "0.3.0",
 			"org.apache.commons" % "commons-math3" % "3.4.1",
-			"commons-io" % "commons-io" % "2.4"
+			"commons-io" % "commons-io" % "2.4",
+			"org.apache.zeppelin" % "zeppelin-interpreter" % "0.5.0-incubating"
 		)
 	)
 }
