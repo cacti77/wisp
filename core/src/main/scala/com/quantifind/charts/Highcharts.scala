@@ -78,6 +78,16 @@ class Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLower
 
   def getHtml = buildHtmlFragment
 
+  private def isInZeppelin = sys.env.get("ZEPPELIN_HOME").isDefined
+
+  def show(): Unit = {
+    if (isInZeppelin) {
+      print("%html " + getHtml)
+    } else {
+      println("We're not running in Zeppelin!")
+    }
+  }
+
   def addStyle[A, B, C, D](hc: Highchart, xy: IterablePair[A, B, C, D]) = {
     xy match {
       case s: StringIterableIterable[_] => xAxisCategories(hc, s.getCategories)
