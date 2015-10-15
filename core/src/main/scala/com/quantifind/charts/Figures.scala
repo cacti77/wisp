@@ -11,7 +11,14 @@ object Figures {
   }
 
   def help(): Unit = {
-    // TODO Add help specific to Figures once we're happy with its methods and usage.
+    println("\nFigure commands:\n")
+    Map(
+      "newFigure()" -> "Creates and returns a new charting object"
+    )
+      .map{case(plot, description) =>"\t%-35s%s".format(plot, description)}
+      .foreach(println)
+
+    println("\nThe following commands are available for each charting object...")
     newFigure().help()
   }
 }

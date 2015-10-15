@@ -211,10 +211,11 @@ class Highcharts extends IterablePairLowerPriorityImplicits with BinnedDataLower
 
     println("\nServer Controls:\n")
     ListMap(
+      "show" -> "displays the chart's plots within an Apache Zeppelin paragraph",
       "undo" -> "undoes the most recent action",
       "redo" -> "the opposite of undo",
-      "delete" -> "wipes the most recent chart from the page",
-      "deleteAll" -> "wipes all plots from the page"
+      "delete" -> "wipes the most recent plot from the chart",
+      "deleteAll" -> "wipes all plots from the chart"
     ).foreach{case(method, description) => println("\t%-35s%s".format(method, description))}
   }
 }
