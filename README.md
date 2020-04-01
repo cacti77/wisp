@@ -11,7 +11,7 @@ tools to the scala console, while preserving an at-your-finger-tips feel readily
 
 <!---Todo: logo--->
 
-It is now available on maven central. The alpha release of wisp is available as `0.0.4`. An sbt dependency would look like:
+It is available on maven central. The alpha release of wisp is available as `0.0.4`. An sbt dependency would look like:
 
     "com.quantifind" %% "wisp" % "0.0.4"
 
